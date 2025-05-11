@@ -1,5 +1,5 @@
-H3>ENTER YOUR NAME</H3>
-<H3>ENTER YOUR REGISTER NO.</H3>
+H3>ENTER YOUR NAME : SANJAY SIVARAMAKRISHNAN M</H3>
+<H3>ENTER YOUR REGISTER NO: 212223240151</H3>
 <H3>EX. NO.5</H3>
 <H3>DATE:</H3>
 <H1 ALIGN =CENTER>Implementation of XOR  using RBF</H1>
@@ -34,12 +34,90 @@ Step 6: Test the network for accuracy<br>
 Step 7: Plot the Input space and Hidden space of RBF NN for XOR classification.
 
 <H3>PROGRAM:</H3>
+```
+import numpy as np 
+import matplotlib.pyplot as plt 
+def gaussian_rbf(x, landmark, gamma=1):
+    """Compute RBF feature."""
+    return np.exp(-gamma * np.linalg.norm(x - landmark) ** 2)
 
-Insert  your code here
+def end_to_end(x1, x2, ys, mu1, mu2):
+    # Compute transformed features
+    pts = [np.array([i, j]) for i, j in zip(x1, x2)]
+    from_1 = [gaussian_rbf(p, mu1) for p in pts]
+    from_2 = [gaussian_rbf(p, mu2) for p in pts]
+    
+    # Plot original XOR
+    plt.figure(figsize=(13, 5))
+    plt.subplot(1, 2, 1)
+    plt.scatter(x1[[0,3]], x2[[0,3]], label='Class 0')
+    plt.scatter(x1[[1,2]], x2[[1,2]], label='Class 1')
+    plt.xlabel('$X_1$', fontsize=15)
+    plt.ylabel('$X_2$', fontsize=15)
+    plt.title('XOR: Linearly Inseparable', fontsize=15)
+    plt.legend()
+    
+    # Plot in RBF feature space
+    plt.subplot(1, 2, 2)
+    plt.scatter(from_1[0], from_2[0], label='Class 0')
+    plt.scatter(from_1[1], from_2[1], label='Class 1')
+    plt.scatter(from_1[2], from_2[2], label='Class 1')
+    plt.scatter(from_1[3], from_2[3], label='Class 0')
+    plt.plot([0, 1], [1, 0], 'k--')
+    plt.annotate("Separating hyperplane",
+                 xy=(0.4, 0.6), xytext=(0.6, 0.8),
+                 arrowprops=dict(facecolor='black', shrink=0.05))
+    plt.xlabel(f"$\\phi_1$ (RBF wrt {mu1})", fontsize=15)
+    plt.ylabel(f"$\\phi_2$ (RBF wrt {mu2})", fontsize=15)
+    plt.title('Transformed Inputs: Linearly Separable', fontsize=15)
+    plt.legend()
+    plt.show()
+    
+    # Build design matrix A = [phi1, phi2, bias]
+    A = np.column_stack([from_1, from_2, np.ones(len(ys))])
+    
+    # Solve for weights W via least squares
+    # W shape (3,)
+    W = np.linalg.pinv(A) @ ys
+    
+    # Verify predictions on training set
+    preds = np.round(A @ W).astype(int)
+    print("Predictions on training set:", preds)
+    print("True labels:             ", ys)
+    print("Learned weights         :", W)
+    return W
+
+def predict_matrix(point, weights, mu1, mu2):
+    """Predict for a single 2D point using learned weights."""
+    phi1 = gaussian_rbf(point, mu1)
+    phi2 = gaussian_rbf(point, mu2)
+    A = np.array([phi1, phi2, 1.0])
+    return int(np.round(A @ weights))
+
+# XOR data
+x1 = np.array([0, 0, 1, 1])
+x2 = np.array([0, 1, 0, 1])
+ys = np.array([0, 1, 1, 0])
+
+# RBF centers
+mu1 = np.array([0, 1])    
+mu2 = np.array([1, 0])
+
+# Train
+W = end_to_end(x1, x2, ys, mu1, mu2)
+
+# Test predictions
+for pt in [(0,0), (0,1), (1,0), (1,1)]:
+    pred = predict_matrix(np.array(pt), W, mu1, mu2)
+    print(f"Input: {pt}, Predicted: {pred}")
+
+```
 
 <H3>OUTPUT:</H3>
 
-Show your code here
+![image](https://github.com/user-attachments/assets/afcdab0a-4090-4a36-b5e3-26e72dbb4441)
+![image](https://github.com/user-attachments/assets/ebd0c6ff-ecb0-4dfa-8e04-dbcab0c38542)
+
 
 <H3>Result:</H3>
 Thus , a Radial Basis Function Neural Network is implemented to classify XOR data.
