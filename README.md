@@ -1,7 +1,7 @@
 H3>ENTER YOUR NAME : SANJAY SIVARAMAKRISHNAN M</H3>
 <H3>ENTER YOUR REGISTER NO: 212223240151</H3>
 <H3>EX. NO.5</H3>
-<H3>DATE:</H3>
+<H3>DATE: 11.05.2025</H3>
 <H1 ALIGN =CENTER>Implementation of XOR  using RBF</H1>
 <H3>Aim:</H3>
 To implement a XOR gate classification using Radial Basis Function  Neural Network.
